@@ -2,7 +2,10 @@ module github.com/thisisheymde/URL-Shortener
 
 go 1.19
 
-require go.mongodb.org/mongo-driver v1.11.2
+require (
+	github.com/rs/cors v1.8.3
+	go.mongodb.org/mongo-driver v1.11.2
+)
 
 require (
 	github.com/golang/snappy v0.0.1 // indirect

@@ -18,8 +18,10 @@ type MongoStore struct {
 	collection *mongo.Collection
 }
 
+// Figure out a way to add TTL (autodelete) for each url
+
 func newDBStore() (*MongoStore, error) {
-	clientOptions := options.Client().ApplyURI(os.Getenv("MONGO_URL"))
+	clientOptions := options.Client().ApplyURI(os.Getenv("MONGO_URI"))
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 
 	if err != nil {

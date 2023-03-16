@@ -9,6 +9,8 @@ import (
 	"regexp"
 	"strconv"
 	"time"
+
+	"github.com/rs/cors"
 )
 
 var getLink = regexp.MustCompile(`\/api\/shorten\/*$`)
@@ -34,21 +36,22 @@ func (h *apiServer) Run() {
 	router.Handle("/s/", h)
 	router.Handle("/", h)
 
-	http.ListenAndServe(h.listenAddr, router)
+	http.ListenAndServe(h.listenAddr, cors.AllowAll().Handler(router))
 }
 
 func (h *apiServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 
 	switch {
-	case r.Method == http.MethodGet:
-		log.Println("HTTP Method: GET")
-		h.home(w, r)
-		return
 
 	case r.Method == http.MethodGet && resolvLink.MatchString(r.URL.Path):
 		log.Println("HTTP Method: GET")
 		h.resolve(w, r)
+		return
+
+	case r.Method == http.MethodGet:
+		log.Println("HTTP Method: GET")
+		h.home(w, r)
 		return
 
 	case r.Method == http.MethodPost && getLink.MatchString(r.URL.Path):
