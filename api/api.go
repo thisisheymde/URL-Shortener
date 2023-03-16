@@ -34,7 +34,6 @@ func (h *apiServer) Run() {
 	router.Handle("/api/shorten/", h)
 	router.Handle("/api/shorten", h)
 	router.Handle("/s/", h)
-	router.Handle("/", h)
 
 	http.ListenAndServe(h.listenAddr, cors.AllowAll().Handler(router))
 }
@@ -49,11 +48,6 @@ func (h *apiServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.resolve(w, r)
 		return
 
-	case r.Method == http.MethodGet:
-		log.Println("HTTP Method: GET")
-		h.home(w, r)
-		return
-
 	case r.Method == http.MethodPost && getLink.MatchString(r.URL.Path):
 		log.Println("HTTP Method: POST")
 		h.shorten(w, r)
@@ -63,16 +57,6 @@ func (h *apiServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.notFound(w, r)
 		return
 	}
-}
-
-func (h *apiServer) home(w http.ResponseWriter, r *http.Request) {
-	respHelp := map[string]string{
-		"GET":  "at /s/valid_id to get redirected to the url",
-		"POST": "at /api/shorten to get the id",
-	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(respHelp)
 }
 
 func (h *apiServer) shorten(w http.ResponseWriter, r *http.Request) {
