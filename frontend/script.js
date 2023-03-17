@@ -14,7 +14,7 @@ function copyToClipboard() {
 }
 
 async function marinate(postData) {
-    const response = await fetch(apiUrl, {
+    const response = await fetch(apiUrl + "/api/shorten", {
         method: 'POST', 
         headers: {
             'Content-Type': 'application/json',
