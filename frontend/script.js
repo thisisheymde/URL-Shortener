@@ -1,7 +1,7 @@
 const apiUrl = "http://localhost:8081"
 
 function shorten() {
-    let url = document.getElementById("url" + "/api/shorten/").value
+    let url = document.getElementById("url").value
     var postData = {
         "url": url
     };
