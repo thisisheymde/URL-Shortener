@@ -1,23 +1,25 @@
 version: '3.9'
 
 services:
-  mongo:
-    image: mongo
+  redis_db:
+    image: redis:latest
+    command: redis-server --appendonly yes --requirepass securepassword
+    ports:
+      - "6379:6379"
     volumes:
-      - mongodb_data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      - redis_data:/data
     restart: always
 
-  api:
-    build: ./api
+  backend:
+    build: ./backend
     depends_on:
-      - mongo
+      - redis_db
     environment:
-      MONGO_URI: mongodb://root:example@mongo:27017/
+      REDIS_HOST: redis_db
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: securepassword
     ports:
-      - 8081:8080
+      - 8081:8081
     restart: always
 
   frontend:
@@ -26,4 +28,4 @@ services:
       - 8080:80
 
 volumes:
-  mongodb_data:
+  redis_data:
