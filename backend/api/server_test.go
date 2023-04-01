@@ -13,7 +13,7 @@ import (
 	"github.com/thisisheymde/URL-shortener/backend/types"
 )
 
-var store, _ = storage.StartRedis("containers-us-west-33.railway.app:7772", "pOK9WhpY0SZ5TLh8T6ui", 0)
+var store, _ = storage.StartRedis("containers-us-west-33.railway.app:7772", "pOK9WhpY0SZ5TLh8T6ui")
 var server = api.NewServer(":8081", store)
 
 func TestServer_Shorten(t *testing.T) {
