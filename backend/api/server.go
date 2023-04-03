@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
 	"regexp"
 
@@ -41,22 +43,29 @@ func (s *Server) Run() {
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 
-	// Rate Limiting
-	// if err := RateLimiting(w, r); err != nil {
-	// 	w.WriteHeader(http.StatusTooManyRequests)
-	// 	json.NewEncoder(w).Encode(map[string]string{"error": "too many requests"})
-	// 	return
-	// }
+	//Rate Limiting
+	err := RateLimiting(w, r)
+
+	if errors.Is(err, errors.New("rate exceeded")) {
+		w.WriteHeader(http.StatusTooManyRequests)
+		json.NewEncoder(w).Encode(map[string]string{"error": "too many requests"})
+		return
+	}
+
+	if err != nil {
+		log.Print("ERR: ")
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "check logs, bad cache"})
+		return
+	}
 
 	switch {
 	case r.Method == http.MethodGet && resolvLink.MatchString(r.URL.Path):
-		// log.Println("HTTP Method: GET")
 		s.resolve(w, r)
 		return
 
 	case r.Method == http.MethodPost && getLink.MatchString(r.URL.Path):
-		// log.Println("HTTP Method: POST")
-
 		s.shorten(w, r)
 		return
 

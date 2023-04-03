@@ -1,6 +1,6 @@
-## URL-Shortener-API
+## URL-Shortener
 
-A simple URL Shortener API written in Go by using only net/http.
+A simple URL Shortener written in Go by using only net/http.
 
 Tools: Go, MongoDB, Docker
 

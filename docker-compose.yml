@@ -3,11 +3,18 @@ version: '3.9'
 services:
   redis_db:
     image: redis:latest
-    command: redis-server --appendonly yes --requirepass securepassword
+    command: redis-server --appendonly yes --requirepass securepassword1
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    restart: always
+
+  redis_cache:
+    image: redis:latest
+    command: redis-server --appendonly yes --port 6380 --requirepass securepassword2
+    ports:
+      - "6380:6380"
     restart: always
 
   backend:
@@ -17,7 +24,10 @@ services:
     environment:
       REDIS_HOST: redis_db
       REDIS_PORT: 6379
-      REDIS_PASSWORD: securepassword
+      REDIS_PASSWORD: securepassword1
+      REDISCACHE_HOST: redis_cache
+      REDISCACHE_PORT: 6380
+      REDISCACHE_PASSWORD: securepassword2
     ports:
       - 8081:8081
     restart: always
