@@ -4,22 +4,20 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/redis/go-redis/v9"
 )
 
-// var clientRL = redis.NewClient(&redis.Options{
-// 	Addr:     os.Getenv("REDISCACHE_HOST") + ":" + os.Getenv("REDISCACHE_PORT"),
-// 	Password: os.Getenv("REDISCACHE_PASSWORD"),
-// })
-
 var clientRL = redis.NewClient(&redis.Options{
-	Addr:     "containers-us-west-163.railway.app:6693",
-	Password: "RZACxSmmqZVvhXUYVgfu",
+	Addr:     os.Getenv("REDISCACHE_HOST") + ":" + os.Getenv("REDISCACHE_PORT"),
+	Password: os.Getenv("REDISCACHE_PASSWORD"),
 })
 
 var ctx = context.Background()
+
+var ErrRateExceeded = errors.New("rate exceeded")
 
 func RateLimiting(w http.ResponseWriter, r *http.Request) error {
 	exists, _ := clientRL.Exists(ctx, r.RemoteAddr).Result()
@@ -38,7 +36,7 @@ func RateLimiting(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if count > 25 {
-		return errors.New("rate exceeded")
+		return ErrRateExceeded
 	}
 
 	err = clientRL.Set(ctx, r.RemoteAddr, count+1, redis.KeepTTL).Err()

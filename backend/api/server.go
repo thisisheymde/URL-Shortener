@@ -46,7 +46,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	//Rate Limiting
 	err := RateLimiting(w, r)
 
-	if errors.Is(err, errors.New("rate exceeded")) {
+	if errors.Is(err, ErrRateExceeded) {
 		w.WriteHeader(http.StatusTooManyRequests)
 		json.NewEncoder(w).Encode(map[string]string{"error": "too many requests"})
 		return
