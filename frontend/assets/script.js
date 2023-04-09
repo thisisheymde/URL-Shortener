@@ -22,8 +22,7 @@ async function shorten() {
         document.querySelector("button").onclick = copyToClipboard()
 
     } else {
-        document.querySelector(".error").innerText = "Server has encountered some error."
-        document.querySelector(".error").style.opacity = 100
+        document.querySelector("#error").classList.toggle("opacity-0")
     }
 }
 
