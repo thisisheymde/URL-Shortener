@@ -22,7 +22,7 @@ async function shorten() {
         document.querySelector("button").onclick = copyToClipboard()
 
     } else {
-        document.querySelector("#error").classList.toggle("opacity-0")
+        alert(resp["error"])
     }
 }
 
